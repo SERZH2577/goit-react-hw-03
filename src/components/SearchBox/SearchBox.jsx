@@ -2,7 +2,7 @@ import css from './SearchBox.module.css';
 import { nanoid } from 'nanoid';
 import { Formik, Field } from 'formik';
 
-export default function SearchBox() {
+export default function SearchBox({ value, onSearch }) {
   const nameId = nanoid();
 
   return (
@@ -15,6 +15,10 @@ export default function SearchBox() {
           type='text'
           name='name'
           id={nameId}
+          value={value}
+          onChange={e => {
+            onSearch(e.target.value);
+          }}
           className={css.searchInput}
         />
       </div>

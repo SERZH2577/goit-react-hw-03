@@ -1,27 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ContactForm from '../ContactForm/ContactForm';
 import SearchBox from '../SearchBox/SearchBox';
 import ContactList from '../ContactList/ContactList';
 import css from './App.module.css';
 import contactDatabase from '../../data/contactDatabase.json';
 
-console.log(contactDatabase[0]);
+const getInitialContacts = () => {
+  const storageContacts = localStorage.getItem('contacts');
 
-// import * as Yup from "yup"
+  if (storageContacts !== null) {
+    return JSON.parse(storageContacts);
+  }
+
+  return contactDatabase;
+};
 
 function App() {
-  const [contacts, setContacts] = useState(contactDatabase);
+  const [contacts, setContacts] = useState(getInitialContacts);
+  const [search, setSearch] = useState('');
 
-  // const handelContactAdd = contact => {
-  //   setContacts({ ...contacts, contact });
-  // };
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const addContact = newContact => {
+    setContacts(prevContacts => {
+      return [...prevContacts, newContact];
+    });
+  };
+
+  const removeContact = contactId => {
+    setContacts(prevContacts => {
+      return prevContacts.filter(contact => contact.id !== contactId);
+    });
+  };
+
+  const visibleContacts = contacts.filter(contact => {
+    return contact.name.toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
     <div>
       <h1 className={css.title}>Phonebook</h1>
-      <ContactForm />
-      <SearchBox />
-      <ContactList contacts={contacts} />
+      <ContactForm onAddContact={addContact} />
+      <SearchBox value={search} onSearch={setSearch} />
+      <ContactList contacts={visibleContacts} onRemoveContact={removeContact} />
     </div>
   );
 }

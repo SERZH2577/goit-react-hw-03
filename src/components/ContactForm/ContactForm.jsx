@@ -5,15 +5,16 @@ import * as Yup from 'yup';
 
 const ContactSchema = Yup.object().shape({
   contactName: Yup.string()
-    .min(2, 'Minimum 2 characters')
-    .max(30, 'Maximum 30 characters')
+    .min(3, 'Minimum 3 characters')
+    .max(50, 'Maximum 50 characters')
     .required('This field is required'),
-  number: Yup.number()
-    .min(7, 'Minimum 7 characters')
+  number: Yup.string()
+    .min(3, 'Minimum 3 characters')
+    .max(50, 'Maximum 50 characters')
     .required('This field is required'),
 });
 
-export default function ContactForm() {
+export default function ContactForm({ onAddContact }) {
   const contactNameId = nanoid();
   const contactNumberId = nanoid();
 
@@ -22,7 +23,12 @@ export default function ContactForm() {
       initialValues={{ contactName: '', number: '' }}
       validationSchema={ContactSchema}
       onSubmit={(values, actions) => {
-        console.log(values);
+        onAddContact({
+          id: nanoid(),
+          name: values.contactName,
+          number: values.number,
+        });
+
         actions.resetForm();
       }}
     >
@@ -52,8 +58,8 @@ export default function ContactForm() {
             name='number'
             id={contactNumberId}
             className={css.contactInput}
-            pattern='[0-9]{7}'
-            maxLength='7'
+            pattern='[0-9]{3}-[0-9]{2}-[0-9]{2}'
+            maxLength='9'
           />
           <ErrorMessage name='number' className={css.error} component='p' />
         </div>
