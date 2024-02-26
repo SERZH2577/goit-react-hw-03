@@ -58,8 +58,6 @@ export default function ContactForm({ onAddContact }) {
             name='number'
             id={contactNumberId}
             className={css.contactInput}
-            pattern='[0-9]{3}-[0-9]{2}-[0-9]{2}'
-            maxLength='9'
           />
           <ErrorMessage name='number' className={css.error} component='p' />
         </div>
